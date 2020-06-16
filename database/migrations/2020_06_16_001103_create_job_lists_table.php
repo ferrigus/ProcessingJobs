@@ -18,6 +18,7 @@ class CreateJobListsTable extends Migration
             $table->string('queue',10)->default('low');
             $table->bigInteger('submitter_id');
             $table->bigInteger('processor_id')->nullable()->default(null);
+            $table->time('processing_time')->default('00:00:00');
             $table->timestamps();
         });
     }

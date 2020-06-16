@@ -38,7 +38,7 @@ class JobListController extends Controller
     {
         $inputs = $request->input();
 
-        $job_lists = JobList::orderBy('created_at','desc');
+        $job_lists = JobList::orderBy('created_at','desc')->with('submitter')->with('processor');
 
         if(array_key_exists('processor_id',$inputs)){
             $job_lists = $job_lists->where('processor_id',$request->processor_id);

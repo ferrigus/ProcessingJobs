@@ -27,9 +27,10 @@ Route::group(['middleware' => 'api'], function($app){
 	});
 
 	$app->group(['prefix' => 'job_lists'], function($app){
+		$app->get('/', 'JobListController@index');
 		$app->post('/store', 'JobListController@store');
 		$app->post('update/{id}', 'JobListController@update');
-		$app->get('/avaliable_jobs/', 'JobListController@avaliable_jobs');
+		
 	});
 });
 

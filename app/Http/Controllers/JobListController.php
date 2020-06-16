@@ -28,6 +28,39 @@ class JobListController extends Controller
     }
 
     /**
+     * Get a list of jobs
+     *
+     * @param  \Illuminate\Http\Request  $request
+     * @return \Illuminate\Http\Response
+     */
+    public function index(Request $request)
+    {
+        $inputs = $request->input();
+
+        $job_lists = JobList::orderBy('created_at','desc');
+
+        if(array_key_exists('processor_id',$inputs)){
+            $job_lists = $job_lists->where('processor_id',$request->processor_id);
+        }
+
+        if(array_key_exists('submitter_id',$inputs)){
+            $job_lists = $job_lists->where('processor_id',$request->processor_id);
+        }
+
+        if(array_key_exists('avaliable', $inputs) && $request->avaliable==1){
+
+            $job_lists = $job_lists->whereNull('processor_id');
+        }
+
+        $job_lists = $job_lists->get();
+
+        if($job_lists->count()>0){
+            $this->results = array('data'=>$job_lists,'status'=>'200','message'=>'Success');
+        }
+        return response()->json($this->results);
+    }
+
+    /**
      * Store a newly created resource in storage.
      *
      * @param  \Illuminate\Http\Request  $request

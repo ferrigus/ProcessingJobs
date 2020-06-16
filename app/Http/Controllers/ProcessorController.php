@@ -21,7 +21,7 @@ class ProcessorController extends Controller
      */
     public function index()
     {
-        $processors = Processor::get();
+        $processors = Processor::with('job_list')->get();
 
         if($processors->count()>0){
             $this->results = array('data'=>$processors,'status'=>'200','message'=>'Success');
@@ -38,7 +38,7 @@ class ProcessorController extends Controller
      */
     public function show($id)
     {
-        $processor = Processor::where('id',$id)->first();
+        $processor = Processor::where('id',$id)->with('job_list')->first();
 
         if($processor!=null){
             $this->results = array('data'=>$processor,'status'=>'200','message'=>'Success');

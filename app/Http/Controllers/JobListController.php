@@ -6,6 +6,7 @@ use Validator;
 use App\JobList;
 use App\Submitter;
 use App\Processor;
+use App\Jobs\ProcessJobList;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
@@ -111,7 +112,7 @@ class JobListController extends Controller
      * @param  int  $id
      * @return \Illuminate\Http\Response
      */
-    public function update(Request $request, $id)
+    public function update(Request $request)
     {
         unset($this->rules_fields['submitter_id']);
         unset($this->rules_fields['quantity']);
@@ -124,22 +125,14 @@ class JobListController extends Controller
 
             if($processor!=null){
             
-                $job_list = JobList::where('id',$id)->whereNull('processor_id')->where('queue','high')->orderBy('created_at','desc')->first();
+                $job_list = JobList::whereNull('processor_id')->where('queue','high')->orderBy('created_at','desc')->first();
 
                 if($job_list!=null){
-                    $end_time = strtotime(date('H:i:s'));
-                    $final_time = date('H:i:s',$end_time - $start_time);
-                    
-                    $job_list->processor_id = $request->processor_id;
-                    $job_list->queue = 'high';
-                    $job_list->processing_time = $final_time;
-                    if($job_list->save()){
-                        array_push($this->job_lists_ids,$job_list->id);
-                        $this->results = array('data'=>$this->job_lists_ids,'status'=>'201','message'=>'Success');
-                    }else{
-                        $this->results['message'] = 'Updating Job Failed.';
-                    }
 
+                    ProcessJobList::dispatch($job_list, $start_time, $request->processor_id);
+
+                    array_push($this->job_lists_ids,$job_list->id);
+                    $this->results = array('data'=>$this->job_lists_ids,'status'=>'201','message'=>'Success');
                 }else{
                     $this->results['message'] = 'Invalid Job Id.';
                 }

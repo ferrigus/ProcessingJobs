@@ -69,7 +69,7 @@ class JobListController extends Controller
      */
     public function store(Request $request)
     {
-        unset($this->rules_fields['processors_id']);
+        unset($this->rules_fields['processor_id']);
         $validatedData = Validator::make($request->all(), $this->rules_fields);
         
         if (!$validatedData->fails()){
